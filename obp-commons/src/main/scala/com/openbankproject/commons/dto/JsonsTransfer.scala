@@ -550,7 +550,8 @@ case class OutBoundMakeHistoricalPayment(outboundAdapterCallContext: OutboundAda
                                          currency: String,
                                          description: String,
                                          transactionRequestType: String,
-                                         chargePolicy: String
+                                         chargePolicy: String,
+                                         transactionRequestId: Option[TransactionRequestId],
                                          ) extends TopicTrait
 case class InBoundMakeHistoricalPayment(inboundAdapterCallContext: InboundAdapterCallContext, status: Status, data: TransactionId) extends InBoundTrait[TransactionId]
 

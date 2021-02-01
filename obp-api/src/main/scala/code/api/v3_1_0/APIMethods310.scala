@@ -5630,7 +5630,9 @@ trait APIMethods310 {
             chargePolicy = transDetailsJson.charge_policy
             
            //There is no constraint for the type at the moment  
-            transactionType = transDetailsJson.`type` 
+            transactionType = transDetailsJson.`type`
+
+            transactionRequestId = transDetailsJson.transaction_request_id.map(TransactionRequestId(_))
 
             (transactionId, callContext) <- NewStyle.function.makeHistoricalPayment(
               fromAccount,
@@ -5642,6 +5644,7 @@ trait APIMethods310 {
               transDetailsJson.description,
               transactionType,
               chargePolicy,
+              transactionRequestId,
               callContext
             )
           } yield {

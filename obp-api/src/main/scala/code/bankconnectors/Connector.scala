@@ -2289,6 +2289,7 @@ trait Connector extends MdcLoggable {
                             description: String,
                             transactionRequestType: String,
                             chargePolicy: String,
+                            transactionRequestId: Option[TransactionRequestId],
                             callContext: Option[CallContext]): OBPReturnType[Box[TransactionId]] = Future{(Failure(setUnimplementedError), callContext)}
 
   /**

@@ -1313,6 +1313,7 @@ object LocalMappedConnector extends Connector with MdcLoggable {
                                       description: String,
                                       transactionRequestType: String,
                                       chargePolicy: String,
+                                      transactionRequestId: Option[TransactionRequestId],
                                       callContext: Option[CallContext]): OBPReturnType[Box[TransactionId]] = {
     for {
       /* Here there is three possibilities
@@ -1388,11 +1389,21 @@ object LocalMappedConnector extends Connector with MdcLoggable {
       debitTransaction = debitTransactionBox.openOrThrowException(s"Error while opening debitTransaction. This error can happen when no settlement can be found, please check that $INCOMING_ACCOUNT_ID exists at bank ${toAccount.bankId.value}")
       creditTransaction = creditTransactionBox.openOrThrowException(s"Error while opening creditTransaction. This error can happen when no settlement can be found, please check that $OUTGOING_ACCOUNT_ID exists at bank ${fromAccount.bankId.value}")
 
+      (transactionRequest, callContext) <- NewStyle.function.getTransactionRequestImpl(transactionRequestId.get, callContext).map(r => (Some(r._1), r._2))
+        .fallbackTo((Future(None, callContext)))
+
+      _ <- Future(println(transactionRequest))
+
+      transactionRequestBankAccountTransaction = transactionRequest.map {
+        case tr if(tr.transaction_ids == debitTransaction._3.value) => debitTransaction
+        case tr if(tr.transaction_ids == creditTransaction._3.value) => creditTransaction
+      }
+
       _ <- NewStyle.function.saveDoubleEntryBookTransaction(
         DoubleEntryTransaction(
-          transactionRequestBankId = None,
-          transactionRequestAccountId = None,
-          transactionRequestId = None,
+          transactionRequestBankId = transactionRequestBankAccountTransaction.map(_._1),
+          transactionRequestAccountId = transactionRequestBankAccountTransaction.map(_._2),
+          transactionRequestId = transactionRequest.map(_.id),
           debitTransactionBankId = debitTransaction._1,
           debitTransactionAccountId = debitTransaction._2,
           debitTransactionId = debitTransaction._3,

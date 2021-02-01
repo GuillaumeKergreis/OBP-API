@@ -2368,6 +2368,7 @@ object NewStyle {
       description: String,
       transactionRequestType: String,
       chargePolicy: String,
+      transactionRequestId: Option[TransactionRequestId],
       callContext: Option[CallContext]
     ) : OBPReturnType[TransactionId] =
       Connector.connector.vend.makeHistoricalPayment(
@@ -2380,6 +2381,7 @@ object NewStyle {
         description: String,
         transactionRequestType: String,
         chargePolicy: String,
+        transactionRequestId: Option[TransactionRequestId],
         callContext: Option[CallContext]
       ) map {
         i => (unboxFullOrFail(i._1, callContext, s"$CreateTransactionsException"), i._2)

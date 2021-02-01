@@ -3685,7 +3685,8 @@ object SwaggerDefinitionsJSON {
     posted = DateWithSecondsExampleString,
     completed= DateWithSecondsExampleString,
     `type`= SANDBOX_TAN.toString,
-    charge_policy= "SHARED"
+    charge_policy= "SHARED",
+    transaction_request_id = Some(transactionRequestIdExample.value)
   )
 
   val postHistoricalTransactionResponseJson = PostHistoricalTransactionResponseJson(
